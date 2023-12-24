@@ -38,7 +38,7 @@ export class AuthenticationGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtVerifier.verify(token);
+      const payload = await this.jwtVerifier.verify(token as string);
       request["user"] = payload;
     } catch (error) {
       throw new UnauthorizedException(
