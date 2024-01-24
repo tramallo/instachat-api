@@ -5,6 +5,6 @@ export class TestController {
 
     @Get()
     testGet() {
-        return 'get response'
+        return 'test response'
     }
 }

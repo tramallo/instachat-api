@@ -1,25 +1,25 @@
 import { INestApplicationContext, WebSocketAdapter, WsMessageHandler } from "@nestjs/common";
 import { IoAdapter } from "@nestjs/platform-socket.io";
-import { Observable } from "rxjs";
+import { Server, ServerOptions } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-export class ExtendedIoAdaper implements WebSocketAdapter{
-    constructor(app: INestApplicationContext) {
+export type ExtendedIoAdapterDefaultConfig = Pick<ServerOptions, "transports" | "cors">
+type SocketIoServer = Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+
+export class ExtendedIoAdaper extends IoAdapter {
+
+    private defaultConfig: ExtendedIoAdapterDefaultConfig
+
+    constructor(app: INestApplicationContext, defaultConfig: ExtendedIoAdapterDefaultConfig) {
         super(app)
+        this.defaultConfig = defaultConfig
     }
-    
-    create(port: number, options?: any) {
-        throw new Error("Method not implemented.");
-    }
-    bindClientConnect(server: any, callback: Function) {
-        throw new Error("Method not implemented.");
-    }
-    bindClientDisconnect?(client: any, callback: Function) {
-        throw new Error("Method not implemented.");
-    }
-    bindMessageHandlers(client: any, handlers: WsMessageHandler<string>[], transform: (data: any) => Observable<any>) {
-        throw new Error("Method not implemented.");
-    }
-    close(server: any) {
-        throw new Error("Method not implemented.");
+
+    create(port: number, options?: ServerOptions): SocketIoServer {
+        const config = {
+            ...this.defaultConfig,
+            ...options!
+        }
+        return super.create(port, config)
     }
 }
